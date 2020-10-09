@@ -5,6 +5,8 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 # 8 is my pixel/box multiplier size...
 BOX = 8
+HLF = BOX / 2
+QTR = HLF / 2
 
 def draw_invader_0(x, y, color):
     """ Draw an invader 0 """
@@ -17,25 +19,25 @@ def draw_invader_0(x, y, color):
     # Body / face
     arcade.draw_rectangle_filled(x, y - 4, 7 * BOX, 5 * BOX, color)
     # Eyes
-    arcade.draw_rectangle_filled(x - (2 * BOX), y + 4, BOX, BOX, arcade.color.BLACK)
-    arcade.draw_rectangle_filled(x + (2 * BOX), y + 4, BOX, BOX, arcade.color.BLACK)
+    arcade.draw_rectangle_filled(x - 2 * BOX, y + 4, BOX, BOX, arcade.color.BLACK)
+    arcade.draw_rectangle_filled(x + 2 * BOX, y + 4, BOX, BOX, arcade.color.BLACK)
     # Mouth / cut ???
     arcade.draw_rectangle_filled(x, y - 20, 4 * BOX, BOX, arcade.color.BLACK)
     # Antena
-    arcade.draw_rectangle_filled(x - (2 * BOX), y + (2 * BOX) + 4, BOX, BOX, color)
-    arcade.draw_rectangle_filled(x - (3 * BOX), y + (3 * BOX) + 4, BOX, BOX, color)
+    arcade.draw_rectangle_filled(x - 2 * BOX, y + 2 * BOX + 4, BOX, BOX, color)
+    arcade.draw_rectangle_filled(x - 3 * BOX, y + 3 * BOX + 4, BOX, BOX, color)
 
-    arcade.draw_rectangle_filled(x + (2 * BOX), y + (2 * BOX) + 4, BOX, BOX, color)
-    arcade.draw_rectangle_filled(x + (3 * BOX), y + (3 * BOX) + 4, BOX, BOX, color)
+    arcade.draw_rectangle_filled(x + 2 * BOX, y + 2 * BOX + 4, BOX, BOX, color)
+    arcade.draw_rectangle_filled(x + 3 * BOX, y + 3 * BOX + 4, BOX, BOX, color)
     # Legs
-    arcade.draw_rectangle_filled(x - BOX - 4, y - (3 * BOX) - 4, 2 * BOX, BOX, color)
-    arcade.draw_rectangle_filled(x + BOX + 4, y - (3 * BOX) - 4, 2 * BOX, BOX, color)
+    arcade.draw_rectangle_filled(x - BOX - 4, y - 3 * BOX - 4, 2 * BOX, BOX, color)
+    arcade.draw_rectangle_filled(x + BOX + 4, y - 3 * BOX - 4, 2 * BOX, BOX, color)
     # Arms
-    arcade.draw_rectangle_filled(x - (4 * BOX), y, BOX, 2 * BOX, color)
-    arcade.draw_rectangle_filled(x - (5 * BOX), y - BOX - 4, BOX, 3 * BOX, color)
+    arcade.draw_rectangle_filled(x - 4 * BOX, y, BOX, 2 * BOX, color)
+    arcade.draw_rectangle_filled(x - 5 * BOX, y - BOX - 4, BOX, 3 * BOX, color)
 
-    arcade.draw_rectangle_filled(x + (4 * BOX), y, BOX, 2 * BOX, color)
-    arcade.draw_rectangle_filled(x + (5 * BOX), y - BOX - 4, BOX, 3 * BOX, color)
+    arcade.draw_rectangle_filled(x + 4 * BOX, y, BOX, 2 * BOX, color)
+    arcade.draw_rectangle_filled(x + 5 * BOX, y - BOX - 4, BOX, 3 * BOX, color)
 
 def draw_invader_1(x, y, color):
     """ Draw an invader 1 """
@@ -48,11 +50,11 @@ def draw_invader_1(x, y, color):
     # Body
     arcade.draw_rectangle_filled(x, y + BOX + 4, 9 * BOX, 5 * BOX, color)
     # Head shape / cut
-    arcade.draw_rectangle_filled(x - (3 * BOX), y + 3 * BOX + 4, 3 * BOX, BOX, arcade.color.BLACK)
-    arcade.draw_rectangle_filled(x - (4 * BOX), y + 2 * BOX + 4, BOX, BOX, arcade.color.BLACK)
+    arcade.draw_rectangle_filled(x - 3 * BOX, y + 3 * BOX + 4, 3 * BOX, BOX, arcade.color.BLACK)
+    arcade.draw_rectangle_filled(x - 4 * BOX, y + 2 * BOX + 4, BOX, BOX, arcade.color.BLACK)
 
-    arcade.draw_rectangle_filled(x + (3 * BOX), y + 3 * BOX + 4, 3 * BOX, BOX, arcade.color.BLACK)
-    arcade.draw_rectangle_filled(x + (4 * BOX), y + 2 * BOX + 4, BOX, BOX, arcade.color.BLACK)
+    arcade.draw_rectangle_filled(x + 3 * BOX, y + 3 * BOX + 4, 3 * BOX, BOX, arcade.color.BLACK)
+    arcade.draw_rectangle_filled(x + 4 * BOX, y + 2 * BOX + 4, BOX, BOX, arcade.color.BLACK)
     # Eyes
     arcade.draw_rectangle_filled(x - BOX - 4, y + 4, BOX + 4, BOX, arcade.color.BLACK)
     arcade.draw_rectangle_filled(x + BOX + 4, y + 4, BOX + 4, BOX, arcade.color.BLACK)
