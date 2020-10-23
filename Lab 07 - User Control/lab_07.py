@@ -24,6 +24,7 @@ class BattleShip:
         self.change_y = change_y
         self.radius = radius
         self.color = color
+        self.sound = arcade.load_sound("another.ogg")
 
     def on_draw(self):
         """ Draw the battle ship """
@@ -38,26 +39,26 @@ class BattleShip:
         arcade.draw_rectangle_filled(self.position_x, self.position_y + BOX + 4, BOX, BOX, self.color)
 
 
-    def update(self, sound):
+    def update(self):
         # Move the ball
         self.position_y += self.change_y
         self.position_x += self.change_x
         # See if the ball hit the edge of the screen. If so, change direction
         if self.position_x < self.radius:
             self.position_x = self.radius
-            arcade.play_sound(sound)
+            arcade.play_sound(self.sound)
 
         if self.position_x > SCREEN_WIDTH - self.radius:
             self.position_x = SCREEN_WIDTH - self.radius
-            arcade.play_sound(sound)
+            arcade.play_sound(self.sound)
 
         if self.position_y < self.radius:
             self.position_y = self.radius
-            arcade.play_sound(sound)
+            arcade.play_sound(self.sound)
 
         if self.position_y > SCREEN_HEIGHT - self.radius:
             self.position_y = SCREEN_HEIGHT - self.radius
-            arcade.play_sound(sound)
+            arcade.play_sound(self.sound)
 
 class RealInvader:
     def __init__(self, position_x, position_y, change_x, change_y, radius, color):
@@ -69,6 +70,7 @@ class RealInvader:
         self.change_y = change_y
         self.radius = radius
         self.color = color
+        self.sound = arcade.load_sound("another.ogg")
 
     def on_draw(self):
         """ Draw an invader 0 """
@@ -98,26 +100,26 @@ class RealInvader:
         arcade.draw_rectangle_filled(self.position_x + 5 * BOX, self.position_y - BOX - 4, BOX, 3 * BOX, self.color)
 
 
-    def update(self, sound):
+    def update(self):
         # Move the ball
         self.position_y += self.change_y
         self.position_x += self.change_x
         # See if the ball hit the edge of the screen. If so, change direction
         if self.position_x < self.radius:
             self.position_x = self.radius
-            arcade.play_sound(sound)
+            arcade.play_sound(self.sound)
 
         if self.position_x > SCREEN_WIDTH - self.radius:
             self.position_x = SCREEN_WIDTH - self.radius
-            arcade.play_sound(sound)
+            arcade.play_sound(self.sound)
 
         if self.position_y < self.radius:
             self.position_y = self.radius
-            arcade.play_sound(sound)
+            arcade.play_sound(self.sound)
 
         if self.position_y > SCREEN_HEIGHT - self.radius:
             self.position_y = SCREEN_HEIGHT - self.radius
-            arcade.play_sound(sound)
+            arcade.play_sound(self.sound)
 
 
 def draw_invader_0(x, y, color):
@@ -188,7 +190,7 @@ class MyGame(arcade.Window):
         self.invader = RealInvader(88, 200, 0, 0, 88,arcade.color.AUBURN)
 
         self.laser_sound = arcade.load_sound("laser.ogg")
-        self.sound = arcade.load_sound("another.ogg")
+
 
         joysticks = arcade.get_joysticks()
         if joysticks:
@@ -259,8 +261,8 @@ class MyGame(arcade.Window):
             else:
                 self.ship.change_y = -self.joystick.y * MOVEMENT_SPEED
 
-        self.ship.update(self.sound)
-        self.invader.update(self.sound)
+        self.ship.update()
+        self.invader.update()
 
 
 def main():
