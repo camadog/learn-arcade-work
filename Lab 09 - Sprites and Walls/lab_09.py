@@ -19,12 +19,112 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 SCREEN_TITLE = "Sprite Move with Scrolling Screen Example"
 
+RIGHT_FACING = 0
+LEFT_FACING = 1
+
 # How many pixels to keep as a minimum margin between the character
 # and the edge of the screen.
 VIEWPORT_MARGIN = 40
 
 MOVEMENT_SPEED = 5
 
+def load_texture_pair(filename):
+    return [ arcade.load_texture(filename), arcade.load_texture(filename, flipped_horizontally=True)]
+
+class PlayerCharacter(arcade.Sprite):
+    """ Player Sprite"""
+    def __init__(self):
+
+        # Set up parent class
+        super().__init__()
+
+        # Default to face-right
+        self.character_face_direction = RIGHT_FACING
+
+        # Used for flipping between image sequences
+        self.cur_texture = 0
+        self.scale = SPRITE_SCALING
+
+        # Track our state
+        self.jumping = False
+        self.climbing = False
+        self.is_on_ladder = False
+
+        # --- Load Textures ---
+
+        # Images from Kenney.nl's Asset Pack 3
+        # main_path = ":resources:images/animated_characters/female_adventurer/femaleAdventurer"
+        # main_path = ":resources:images/animated_characters/female_person/femalePerson"
+        main_path = ":resources:images/animated_characters/male_person/malePerson"
+        # main_path = ":resources:images/animated_characters/male_adventurer/maleAdventurer"
+        # main_path = ":resources:images/animated_characters/zombie/zombie"
+        # main_path = ":resources:images/animated_characters/robot/robot"
+
+        # Load textures for idle standing
+        self.idle_texture_pair = load_texture_pair(f"{main_path}_idle.png")
+        self.jump_texture_pair = load_texture_pair(f"{main_path}_jump.png")
+        self.fall_texture_pair = load_texture_pair(f"{main_path}_fall.png")
+
+        # Load textures for walking
+        self.walk_textures = []
+        for i in range(8):
+            texture = load_texture_pair(f"{main_path}_walk{i}.png")
+            self.walk_textures.append(texture)
+
+        # Load textures for climbing
+        self.climbing_textures = []
+        texture = arcade.load_texture(f"{main_path}_climb0.png")
+        self.climbing_textures.append(texture)
+        texture = arcade.load_texture(f"{main_path}_climb1.png")
+        self.climbing_textures.append(texture)
+
+        # Set the initial texture
+        self.texture = self.idle_texture_pair[0]
+
+        # Hit box will be set based on the first image used. If you want to specify
+        # a different hit box, you can do it like the code below.
+        # self.set_hit_box([[-22, -64], [22, -64], [22, 28], [-22, 28]])
+        self.set_hit_box(self.texture.hit_box_points)
+
+    def update_animation(self, delta_time: float = 1/60):
+
+        # Figure out if we need to flip face left or right
+        if self.change_x < 0 and self.character_face_direction == RIGHT_FACING:
+            self.character_face_direction = LEFT_FACING
+        elif self.change_x > 0 and self.character_face_direction == LEFT_FACING:
+            self.character_face_direction = RIGHT_FACING
+
+        # Climbing animation
+        if self.is_on_ladder:
+            self.climbing = True
+        if not self.is_on_ladder and self.climbing:
+            self.climbing = False
+        if self.climbing and abs(self.change_y) > 1:
+            self.cur_texture += 1
+            if self.cur_texture > 7:
+                self.cur_texture = 0
+        if self.climbing:
+            self.texture = self.climbing_textures[self.cur_texture // 4]
+            return
+
+        # Jumping animation
+        if self.change_y > 0 and not self.is_on_ladder:
+            self.texture = self.jump_texture_pair[self.character_face_direction]
+            return
+        elif self.change_y < 0 and not self.is_on_ladder:
+            self.texture = self.fall_texture_pair[self.character_face_direction]
+            return
+
+        # Idle animation
+        if self.change_x == 0:
+            self.texture = self.idle_texture_pair[self.character_face_direction]
+            return
+
+        # Walking animation
+        self.cur_texture += 1
+        if self.cur_texture > 7:
+            self.cur_texture = 0
+        self.texture = self.walk_textures[self.cur_texture][self.character_face_direction]
 
 class MyGame(arcade.Window):
     """ Main application class. """
@@ -34,6 +134,14 @@ class MyGame(arcade.Window):
         Initializer
         """
         super().__init__(width, height, title)
+
+        # Track the current state of what key is pressed
+        self.left_pressed = False
+        self.right_pressed = False
+        self.up_pressed = False
+        self.down_pressed = False
+        self.jump_needs_reset = False
+        self.last_key = None
 
         # Set the working directory (where we expect to find files) to the same
         # directory this .py file is in. You can leave this out of your own
@@ -74,7 +182,7 @@ class MyGame(arcade.Window):
         self.coin_list = arcade.SpriteList()
 
         # Set up the player
-        self.player_sprite = arcade.Sprite(":resources:images/animated_characters/female_person/femalePerson_idle.png", 0.4)
+        self.player_sprite = PlayerCharacter()
         self.player_sprite.center_x = 64
         self.player_sprite.center_y = 270
         self.player_list.append(self.player_sprite)
@@ -232,26 +340,53 @@ class MyGame(arcade.Window):
             arcade.draw_text("Game Over", self.view_left + 350, self.view_bottom + 300, arcade.color.WHITE, 14)
             return
 
+    def process_keychange(self):
+        # Process up/down
+        if self.up_pressed and not self.down_pressed:
+            self.player_sprite.change_y = MOVEMENT_SPEED
+        elif self.down_pressed and not self.up_pressed:
+            self.player_sprite.change_y = -MOVEMENT_SPEED
+        else:
+            self.player_sprite.change_y = 0
+
+        # Process left/right
+        if self.right_pressed and not self.left_pressed:
+            self.player_sprite.change_x = MOVEMENT_SPEED
+        elif self.left_pressed and not self.right_pressed:
+            self.player_sprite.change_x = -MOVEMENT_SPEED
+        else:
+            self.player_sprite.change_x = 0
+
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
-        if self.done:
-            return
-        if key == arcade.key.UP:
-            self.player_sprite.change_y = MOVEMENT_SPEED
-        elif key == arcade.key.DOWN:
-            self.player_sprite.change_y = -MOVEMENT_SPEED
-        elif key == arcade.key.LEFT:
-            self.player_sprite.change_x = -MOVEMENT_SPEED
-        elif key == arcade.key.RIGHT:
-            self.player_sprite.change_x = MOVEMENT_SPEED
+
+        if key == arcade.key.UP or key == arcade.key.W:
+            self.up_pressed = True
+        elif key == arcade.key.DOWN or key == arcade.key.S:
+            self.down_pressed = True
+        elif key == arcade.key.LEFT or key == arcade.key.A:
+            self.left_pressed = True
+        elif key == arcade.key.RIGHT or key == arcade.key.D:
+            self.right_pressed = True
+
+        self.last_key = key
+
+        self.process_keychange()
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
 
-        if key == arcade.key.UP or key == arcade.key.DOWN:
-            self.player_sprite.change_y = 0
-        elif key == arcade.key.LEFT or key == arcade.key.RIGHT:
-            self.player_sprite.change_x = 0
+        if key == arcade.key.UP or key == arcade.key.W:
+            self.up_pressed = False
+            self.jump_needs_reset = False
+        elif key == arcade.key.DOWN or key == arcade.key.S:
+            self.down_pressed = False
+        elif key == arcade.key.LEFT or key == arcade.key.A:
+            self.left_pressed = False
+        elif key == arcade.key.RIGHT or key == arcade.key.D:
+            self.right_pressed = False
+
+        self.process_keychange()
 
     def on_update(self, delta_time):
         """ Movement and game logic """
@@ -262,11 +397,12 @@ class MyGame(arcade.Window):
         self.physics_engine.update()
 
         self.coin_list.update()
-        # --- Manage Scrolling ---
 
-        coins_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.coin_list)
+        self.player_list.update_animation(delta_time)
 
         # Loop through each colliding sprite, remove it, and add to the score.
+        coins_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.coin_list)
+
         for coin in coins_hit_list:
             coin.remove_from_sprite_lists()
             self.score += 1
@@ -274,6 +410,7 @@ class MyGame(arcade.Window):
         if self.coin_list.__len__() <= 0:
             self.done = True
 
+        # --- Manage Scrolling ---
         # Keep track of if we changed the boundary. We don't want to call the
         # set_viewport command if we didn't change the view port.
         changed = False
