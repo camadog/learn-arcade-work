@@ -33,11 +33,11 @@ Random Number Guessing Game
 
 def main():
 
-    print("Hi! I'm thinking of a random number between 1 and 100.")
+    print("Hi! I'm thinking of a random number between 1 and 128.")
 
     # NEW CONCEPT
     # Create a secret number
-    secret_number = random.randrange(1, 101)
+    secret_number = random.randrange(1, 128)
 
     # Initialize our attempt count, we start with attempt 1.
     user_attempt_number = 1
