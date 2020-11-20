@@ -32,7 +32,7 @@ class MyGame(arcade.Window):
                 # Add a the number zero to the current row
                 self.grid[row].append(0)
 
-        # self.grid[1][5] = 1
+        self.grid[1][5] = 1
 
 
     def on_draw(self):
@@ -70,30 +70,6 @@ class MyGame(arcade.Window):
                 self.grid[row][column] = 1
             else:
                 self.grid[row][column] = 0
-
-            if (row - 1) >= 0:
-                if self.grid[row - 1][column] == 0:
-                    self.grid[row - 1][column] = 1
-                else:
-                    self.grid[row - 1][column] = 0
-
-            if (row + 1) < ROW_COUNT:
-                if self.grid[row + 1][column] == 0:
-                    self.grid[row + 1][column] = 1
-                else:
-                    self.grid[row + 1][column] = 0
-
-            if (column - 1) >= 0:
-                if self.grid[row][column - 1] == 0:
-                    self.grid[row][column - 1] = 1
-                else:
-                    self.grid[row][column - 1] = 0
-
-            if (column + 1) < COLUMN_COUNT:
-                if self.grid[row][column + 1] == 0:
-                    self.grid[row][column + 1] = 1
-                else:
-                    self.grid[row][column + 1] = 0
 
 def main():
 
