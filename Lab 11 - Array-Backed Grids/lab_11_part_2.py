@@ -61,12 +61,8 @@ class MyGame(arcade.Window):
         Called when the user presses a mouse button.
         """
         if button == arcade.MOUSE_BUTTON_LEFT:
-            str = "Click coordiantes: ({}, {})"
-            print(str.format(x, y), end = ". ")
             column = x // (WIDTH + MARGIN)
             row = y // (HEIGHT + MARGIN)
-            str = "Grid coordiantes: ({}, {})"
-            print(str.format(row, column))
 
             if self.grid[row][column] == 0:
                 self.grid[row][column] = 1
@@ -75,8 +71,24 @@ class MyGame(arcade.Window):
                 self.grid[row][column] = 0
                 self.selected -= 1
 
-            str = "Total of {} cells are selected"
+            str = "Total of {} cells are selected."
             print(str.format(self.selected))
+
+            for row in range(ROW_COUNT):
+                count = 0
+                for column in range(COLUMN_COUNT):
+                    if self.grid[row][column] == 1:
+                        count += 1
+                str = "Row {} has {} cells selected."
+                print(str.format(row, count))
+
+            for column in range(COLUMN_COUNT):
+                count = 0
+                for row in range(ROW_COUNT):
+                    if self.grid[row][column] == 1:
+                        count += 1
+                str = "Column {} has {} cells selected."
+                print(str.format(column, count))
 
 
 def main():
