@@ -1,8 +1,6 @@
 #   Images:
 #   All images used in this project were obtained from Kenney at https://kenney.nl/
 
-
-
 import arcade
 
 # --- Constants ---
@@ -16,12 +14,14 @@ MOVEMENT_SPEED = 5
 LEFT = 0
 RIGHT = 1
 
-PLAYER_START_X = 50
-PLAYER_START_Y = 50
+PLAYER_START_X = 200
+PLAYER_START_Y = 40
 
 class Frog(arcade.Sprite):
     def __init__(self):
         super().__init__()
+        self.lives = 5
+        self.score = 0
         self.scale = 0.5
         self.center_x = PLAYER_START_X
         self.center_y = PLAYER_START_Y
@@ -84,7 +84,7 @@ class Platform(Vehicle):
             
         if self.dive:
             self.fcount +=1
-            if self.fcount == 180:
+            if self.fcount == 120:
                 self.fcount = 0
                 self.diving = not self.diving
                 if not self.diving: 
@@ -127,6 +127,9 @@ class MyGame(arcade.Window):
         self.physics_engine = None
 
         self.done = False
+        self.complete = False
+        
+        self.gameover = arcade.load_sound("gameover4.wav")
 
     def setup(self):
         """ Set up the game and initialize the variables. """
@@ -263,6 +266,14 @@ class MyGame(arcade.Window):
         
         self.car_list.draw()
         
+        """ I have problems with Pillow :( """
+        #arcade.draw_text(f"Lives: {self.player.lives}", 20, 5, arcade.color.BLACK, 16)
+        #arcade.draw_text(f"Score: {self.player.score}", 100, 5, arcade.color.BLACK, 16)
+        
+        if self.complete:
+            arcade.draw_text("You Win", 180, 220, arcade.color.BLACK, 26)
+        elif self.done:
+            arcade.draw_text("Game Over", 180, 220, arcade.color.BLACK, 26)
 
     def update(self, delta_time):
         """ Movement and game logic """
@@ -271,11 +282,13 @@ class MyGame(arcade.Window):
         self.car_list.update()
         
         die = False
+        win = False
         
         #Collision
         carhit = arcade.check_for_collision_with_list(self.player, self.car_list)
         if carhit:
             die = True
+            arcade.play_sound(self.gameover)
             
         over = arcade.check_for_collision_with_list(self.player, self.platform_list)
         finish = arcade.check_for_collision_with_list(self.player, self.finish_list)
@@ -285,7 +298,9 @@ class MyGame(arcade.Window):
             win.center_y = finish[0].center_y
             self.win_list.append(win)
             finish[0].remove_from_sprite_lists()
-            die = True
+            if not len(self.finish_list):
+                self.complete = True
+                self.done = True
         elif over:
             over[0].over = True
             if over[0].dive and over[0].diving:
@@ -294,14 +309,25 @@ class MyGame(arcade.Window):
             drown = arcade.check_for_collision_with_list(self.player, self.water_list)
             if drown:
                 die = True
+                
+        if win:
+            self.player.center_x = PLAYER_START_X
+            self.player.center_y = PLAYER_START_Y
+            self.player.score += 100
         
         if die:
             self.player.center_x = PLAYER_START_X
             self.player.center_y = PLAYER_START_Y
+            self.player.lives -= 1
+        
+        if self.player.lives <= 0:
+            self.done = True
 
         
     def on_key_press(self, key, modifiers):
         """ Called whenever the user presses a key. """
+        if self.done:
+            return
         if key == arcade.key.LEFT:
             self.player.change_x = -MOVEMENT_SPEED
         elif key == arcade.key.RIGHT:

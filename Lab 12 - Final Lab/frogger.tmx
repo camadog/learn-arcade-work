@@ -53,24 +53,24 @@
    eJxjZyAPMAMx+6jeUb2jesF6OSnAACIrARQ=
   </data>
  </layer>
- <layer id="1" name="Background" width="15" height="15">
+ <layer id="1" name="Background" width="15" height="15" visible="0">
   <data encoding="base64" compression="zlib">
    eJxjYBgFgx0wUoBZRjHRmJJw5qIAAwB08wHh
   </data>
  </layer>
- <layer id="2" name="Foreground" width="15" height="15">
+ <layer id="2" name="Foreground" width="15" height="15" visible="0">
   <data encoding="base64" compression="zlib">
    eJxjYBgFowA34CWTHqr2DgQAAMTkALc=
   </data>
  </layer>
- <layer id="5" name="Water" width="15" height="15">
+ <layer id="5" name="Water" width="15" height="15" visible="0">
   <data encoding="base64" compression="zlib">
    eJzjZGBg4BwAzDqKicajYHgDABnBAoY=
   </data>
  </layer>
  <layer id="4" name="Finish" width="15" height="15">
   <data encoding="base64" compression="zlib">
-   eJxjYKAMcJNJj4JRMAogAAD3wABO
+   eJxjYKAO4CaRPwpGwSiAAABsMAAi
   </data>
  </layer>
 </map>
