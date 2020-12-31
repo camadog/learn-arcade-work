@@ -241,7 +241,7 @@ class MyGame(arcade.Window):
                                                       scaling=TILE_SCALING,
                                                       use_spatial_hash=True)
         self.finish_list = arcade.tilemap.process_layer(map_object=map,
-                                                      layer_name="Finish",
+                                                      layer_name="Finish1",
                                                       scaling=TILE_SCALING,
                                                       use_spatial_hash=True)
         
